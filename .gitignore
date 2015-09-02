@@ -1,0 +1,5 @@
+*.py[cdo]
+build
+dist
+*.egg-info
+__pycache__
