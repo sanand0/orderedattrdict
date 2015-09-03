@@ -12,7 +12,7 @@ to be accessed as attributes.
     >>> from orderedattrdict import AttrDict
     >>> conf = AttrDict()
     >>> conf['z'] = 1
-    >>> assert conf.x == 1
+    >>> assert conf.z == 1
     >>> conf.y = 2
     >>> assert conf['y'] == 2
     >>> conf.x = 3
@@ -35,10 +35,12 @@ JSON files can be parsed using `AttrDict` as follows:
 YAML files can be parsed using `AttrDict` as follows:
 
     >>> import yaml
+    >>> from orderedattrdict import AttrDictYAMLLoader
     >>> data = yaml.load(open('file.yaml'), Loader=AttrDictYAMLLoader)
 
 YAML files can be saved from AttrDict structures as follows:
 
+    >>> from orderedattrdict import AttrDictYAMLDumper
     >>> yaml.dump(data, Dumper=AttrDictYAMLDumper)
 
 Installation
