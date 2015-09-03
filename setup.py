@@ -4,13 +4,10 @@
 #   python3 setup.py sdist bdist_wheel --universal
 #   twine upload dist/*
 
-import io
-from os import path
 from setuptools import setup, find_packages
 
-here = path.abspath(path.dirname(__file__))
-with io.open(path.join(here, 'README.md'), encoding='utf-8') as f:
-    long_description = f.read()
+with open('README.md') as fp:
+    long_description = fp.read()
 
 setup(
     name='orderedattrdict',
@@ -23,9 +20,6 @@ setup(
     keywords='ordereddict ordered map attrdict conf config configuration yaml json',
     url='https://github.com/sanand0/orderedattrdict',
     packages=find_packages(exclude=['tests*']),
-    extras_require={
-        'test': ['PyYAML'],
-    },
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
