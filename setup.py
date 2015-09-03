@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 # See https://packaging.python.org/en/latest/distributing.html
-# for instructions
+#   python3 setup.py sdist bdist_wheel --universal
+#   twine upload dist/*
 
 import io
 from os import path
