@@ -1,8 +1,18 @@
+import os
+import json
 import yaml
 import random
 import unittest
 from collections import OrderedDict
-from orderedattrdict import AttrDict, AttrDictYAMLLoader, AttrDictYAMLDumper
+from orderedattrdict import AttrDict
+from orderedattrdict.yamlutils import AttrDictYAMLLoader, from_yaml
+
+
+# In Python 3, chr is unichr
+try:
+    unichr
+except NameError:
+    unichr = chr
 
 
 class Generator(object):
@@ -23,21 +33,20 @@ class Generator(object):
             i = 0x7ffffff - i
         return i
 
-    def _small_float(self, pos=True):
-        n = self.integer(not pos)
-        d = self.integer(False)
-        d = 1 if d is 0 else d
-        return float(d) / float(n)
+    def _small_float(self, signed=True):
+        numerator = self.integer(signed=signed)
+        denominator = self.integer(signed=False)
+        return float(numerator) / float(1 + denominator)
 
     def float(self):
-        base = self._small_float(True)
+        base = self._small_float(signed=False)
         exp = self._small_float()
         return base ** exp
 
     def string(self, n=None):
         if not n:
             n = random.randint(32, 128)
-        return ''.join([chr(self.byte()) for i in range(n)]).strip()
+        return u''.join([unichr(self.byte()) for i in range(n)]).strip()
 
     def array(self, n, d):
         if not n:
@@ -81,6 +90,9 @@ class Generator(object):
 
 class TestAttrDict(unittest.TestCase):
     '''Test core orderedattrdict.AttrDict behaviour'''
+
+    def setUp(self):
+        self.gen = Generator()
 
     def test_attribute_access(self):
         'Items can be accessed as attributes'
@@ -154,8 +166,31 @@ class TestAttrDict(unittest.TestCase):
 
     def test_yaml(self):
         'Load YAML with ordered AttrDict instead of dict'''
-        gen = Generator()
         for iteration in range(10):
-            ad = gen.obj(10)
-            result = yaml.dump(ad, Dumper=AttrDictYAMLDumper)
-            self.assertEqual(yaml.load(result, Loader=AttrDictYAMLLoader), ad)
+            ad = self.gen.obj(10)
+            self.assertEqual(
+                ad, yaml.load(yaml.dump(ad), Loader=AttrDictYAMLLoader))
+            self.assertEqual(
+                ad, yaml.load(yaml.safe_dump(ad), Loader=AttrDictYAMLLoader))
+
+        yaml.add_constructor(u'tag:yaml.org,2002:map', from_yaml)
+        yaml.add_constructor(u'tag:yaml.org,2002:omap', from_yaml)
+        for iteration in range(10):
+            ad = self.gen.obj(10)
+            self.assertEqual(ad, yaml.load(yaml.dump(ad)))
+            self.assertEqual(ad, yaml.load(yaml.safe_dump(ad)))
+
+    def test_json(self):
+        for iteration in range(10):
+            ad = self.gen.obj(10)
+            self.assertEqual(ad, json.loads(json.dumps(ad), object_pairs_hook=AttrDict))
+
+    def test_files(self):
+        'Ensure that test JSON files have values in sorted order'
+        folder = os.path.dirname(os.path.abspath(__file__))
+        with open(os.path.join(folder, 'test.json')) as handle:
+            result = json.load(handle, object_pairs_hook=AttrDict)
+            self.assertEqual(list(result.values()), sorted(result.values()))
+        with open(os.path.join(folder, 'test.yaml')) as handle:
+            result = yaml.load(handle, Loader=AttrDictYAMLLoader)
+            self.assertEqual(list(result.values()), sorted(result.values()))

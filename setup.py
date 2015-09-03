@@ -14,7 +14,7 @@ with io.open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='orderedattrdict',
-    version='1.0.0',
+    version='1.1',
     description='OrderedDict with attribute-style access',
     long_description=long_description,
     author='S Anand',

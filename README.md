@@ -27,21 +27,28 @@ This also applies if the key starts with `__` (two underscores). For example:
     >>> a['keys']
     1
 
-JSON files can be parsed using `AttrDict` as follows:
+Load JSON preserving the order of keys:
 
     >>> import json
-    >>> data = json.load(open('file.json'), object_pairs_hook=AttrDict)
+    >>> data = json.load(open('test.json'), object_pairs_hook=AttrDict)
 
-YAML files can be parsed using `AttrDict` as follows:
+Load YAML preserving the order of keys:
 
     >>> import yaml
-    >>> from orderedattrdict import AttrDictYAMLLoader
-    >>> data = yaml.load(open('file.yaml'), Loader=AttrDictYAMLLoader)
+    >>> from orderedattrdict.yamlutils import AttrDictYAMLLoader
+    >>> data = yaml.load(open('test.yaml'), Loader=AttrDictYAMLLoader)
 
-YAML files can be saved from AttrDict structures as follows:
+Make PyYAML *always* load all dictionaries as `AttrDict`:
 
-    >>> from orderedattrdict import AttrDictYAMLDumper
-    >>> yaml.dump(data, Dumper=AttrDictYAMLDumper)
+    >>> from orderedattrdict.yamlutils import from_yaml
+    >>> yaml.add_constructor(u'tag:yaml.org,2002:map', from_yaml)
+    >>> yaml.add_constructor(u'tag:yaml.org,2002:omap', from_yaml)
+
+`json.dump`, `yaml.dump` and `yaml.safe_dump` convert `AttrDict` into
+dictionaries, retaining the order.
+
+    >>> json.dumps(data)
+    >>> yaml.dump(data)
 
 Installation
 ------------
