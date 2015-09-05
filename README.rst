@@ -18,8 +18,8 @@ keys to be accessed as attributes::
     >>> conf.x = 3
     >>> assert conf.keys() == ['z', 'y', 'x']
 
-**NOTE**: If the key clashes with an AttrDict attribute, the key is not used.
-This also applies if the key starts with ``__`` (two underscores). For example::
+**NOTE**: If the key clashes with an ``OrderedDict`` attribute or starts with
+``__`` (two underscores), you can't access it as an attribute. For example::
 
     >>> a = AttrDict(keys=1)
     >>> a.keys
