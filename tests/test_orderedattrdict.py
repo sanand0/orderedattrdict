@@ -3,7 +3,7 @@ import json
 import yaml
 import random
 import unittest
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict, Counter
 from orderedattrdict import AttrDict
 from orderedattrdict.yamlutils import AttrDictYAMLLoader, from_yaml
 
@@ -93,11 +93,12 @@ class TestAttrDict(unittest.TestCase):
 
     def setUp(self):
         self.gen = Generator()
+        self.klass = AttrDict
 
     def test_attribute_access(self):
         'Items can be accessed as attributes'
 
-        ad = AttrDict()
+        ad = self.klass()
         ad['x'] = 1
         self.assertEqual(ad.x, 1)
         self.assertTrue('x' in ad)
@@ -116,7 +117,7 @@ class TestAttrDict(unittest.TestCase):
         'AttrDict inherits all OrderedDict behaviour'
 
         items = [('x', 1), ('_y', 2), (3, 3)]
-        ad = AttrDict(items)
+        ad = self.klass(items)
         od = OrderedDict(items)
         self.assertEqual(ad, od)
         self.assertEqual(ad.keys(), od.keys())
@@ -152,7 +153,7 @@ class TestAttrDict(unittest.TestCase):
         od.clear()
         self.assertEqual(ad, od)
 
-        ad = AttrDict.fromkeys(range(10), 1)
+        ad = self.klass.fromkeys(range(10), 1)
         od = OrderedDict.fromkeys(range(10), 1)
         self.assertEqual(ad, od)
 
@@ -183,14 +184,82 @@ class TestAttrDict(unittest.TestCase):
     def test_json(self):
         for iteration in range(10):
             ad = self.gen.obj(10)
-            self.assertEqual(ad, json.loads(json.dumps(ad), object_pairs_hook=AttrDict))
+            self.assertEqual(ad, json.loads(json.dumps(ad), object_pairs_hook=self.klass))
 
     def test_files(self):
         'Ensure that test JSON files have values in sorted order'
         folder = os.path.dirname(os.path.abspath(__file__))
         with open(os.path.join(folder, 'test.json')) as handle:
-            result = json.load(handle, object_pairs_hook=AttrDict)
+            result = json.load(handle, object_pairs_hook=self.klass)
             self.assertEqual(list(result.values()), sorted(result.values()))
         with open(os.path.join(folder, 'test.yaml')) as handle:
             result = yaml.load(handle, Loader=AttrDictYAMLLoader)
             self.assertEqual(list(result.values()), sorted(result.values()))
+
+
+class DefaultAttrDict(AttrDict, defaultdict):
+    def __init__(self, default_factory, *args, **kwargs):
+        AttrDict.__init__(self, *args, **kwargs)
+        defaultdict.__init__(self, default_factory)
+        self.__exclude_keys__ |= {'default_factory'}
+
+
+class CounterAttrDict(AttrDict, Counter):
+    def __init__(self, *args, **kwargs):
+        AttrDict.__init__(self, *args, **kwargs)
+        Counter.__init__(self)
+        self.__exclude_keys__ |= {'most_common'}
+
+
+class NoneDefaultAttrDict(DefaultAttrDict):
+    'A DefaultAttrDict that mimics an AttrDict'
+    def __init__(self, *args, **kwargs):
+        super(NoneDefaultAttrDict, self).__init__(None, *args, **kwargs)
+
+    def __copy__(self):
+        return type(self)(self)
+
+
+class TestDefaultAttrDict(TestAttrDict):
+    'DefaultAttrDict with None constructor inherits all AttrDict behaviour'
+
+    def setUp(self):
+        super(TestDefaultAttrDict, self).setUp()
+        self.klass = NoneDefaultAttrDict
+
+    def test_defaultdict_counter(self):
+        'DefaultAttrDict as a list generator'
+        ad = DefaultAttrDict(int)
+        self.assertEqual(ad['x'], 0)
+        ad.x += 1
+        ad.y += 2
+        ad.z = ad.z + 3
+        self.assertEqual(ad, {'x': 1, 'y': 2, 'z': 3})
+
+    def test_defaultdict_with_list(self):
+        'DefaultAttrDict as a list generator'
+        ad = DefaultAttrDict(list)
+        self.assertEqual(ad['x'], [])
+        self.assertEqual(ad['y'], [])
+        self.assertEqual(ad, {'x': [], 'y': []})
+        self.assertFalse('z' in ad)
+
+        ad = DefaultAttrDict(list)
+        self.assertEqual(ad.x, [])
+        self.assertEqual(ad.y, [])
+        self.assertEqual(ad, {'x': [], 'y': []})
+        self.assertFalse('z' in ad)
+
+    def test_defaultdict_tree(self):
+        'DefaultAttrDict can be used as a tree'
+        tree = lambda: DefaultAttrDict(tree)
+        ad = tree()
+        self.assertEqual(ad['x'], {})
+        self.assertEqual(ad['y'], {})
+        self.assertEqual(ad['x']['1'], {})
+        self.assertEqual(ad, {'x': {'1': {}}, 'y': {}})
+        self.assertFalse('z' in ad)
+
+        ad = tree()
+        ad.a.b.c = 1
+        self.assertEqual(ad, {'a': {'b': {'c': 1}}})
