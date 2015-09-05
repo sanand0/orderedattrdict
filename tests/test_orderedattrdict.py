@@ -39,9 +39,13 @@ class Generator(object):
         return float(numerator) / float(1 + denominator)
 
     def float(self):
-        base = self._small_float(signed=False)
-        exp = self._small_float()
-        return base ** exp
+        while True:
+            try:
+                base = self._small_float(signed=False)
+                exp = self._small_float()
+                return base ** exp
+            except OverflowError:
+                pass
 
     def string(self, n=None):
         if not n:
