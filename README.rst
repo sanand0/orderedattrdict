@@ -113,7 +113,7 @@ Installation
 
 This is a pure-Python package built for Python 2.7+ and Python 3.0+. To set up::
 
-    pip install orderedattdict
+    pip install orderedattrdict
 
 Changelog
 ---------
