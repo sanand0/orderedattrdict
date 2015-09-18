@@ -128,3 +128,4 @@ Changelog
 - ``1.0``: Basic implementation
 - ``1.1``: Add utilities to load and save as YAML
 - ``1.2``: Allow specific keys to be excluded from attribute access
+- ``1.3``: Restore ``<<`` merge tags for YAML
