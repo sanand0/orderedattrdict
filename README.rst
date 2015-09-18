@@ -1,6 +1,13 @@
 orderedattrdict
 ===============
 
+.. image:: https://img.shields.io/travis/sanand0/orderedattrdict.svg
+        :target: https://travis-ci.org/sanand0/orderedattrdict
+
+.. image:: https://img.shields.io/pypi/v/orderedattrdict.svg
+        :target: https://pypi.python.org/pypi/orderedattrdict
+
+
 An ordered dictionary with attribute-style access.
 
 Usage
