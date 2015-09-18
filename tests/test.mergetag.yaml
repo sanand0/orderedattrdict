@@ -1,0 +1,6 @@
+# See test_orderedattrdict.py
+# TestAttrDict.test_mergetag()
+base: &base
+  key: value
+derived:
+  <<: *base

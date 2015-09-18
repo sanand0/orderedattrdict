@@ -14,6 +14,7 @@ def from_yaml(loader, node):
     if not isinstance(node, MappingNode):
         raise ConstructorError(
             None, None, 'expected a mapping node, but found %s' % node.id, node.start_mark)
+    loader.flatten_mapping(node)
     for key_node, value_node in node.value:
         key = loader.construct_object(key_node, deep=False)
         try:

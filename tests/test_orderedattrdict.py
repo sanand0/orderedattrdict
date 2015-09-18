@@ -185,6 +185,14 @@ class TestAttrDict(unittest.TestCase):
             self.assertEqual(ad, yaml.load(yaml.dump(ad)))
             self.assertEqual(ad, yaml.load(yaml.safe_dump(ad)))
 
+    def test_mergetag(self):
+        'Check if YAML merge tag works'
+        folder = os.path.dirname(os.path.abspath(__file__))
+        with open(os.path.join(folder, 'test.mergetag.yaml')) as handle:
+            self.assertEqual(
+                {'base': {'key': 'value'}, 'derived': {'key': 'value'}},
+                yaml.load(handle, Loader=AttrDictYAMLLoader))
+
     def test_json(self):
         for iteration in range(10):
             ad = self.gen.obj(10)
