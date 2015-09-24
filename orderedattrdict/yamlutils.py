@@ -8,7 +8,7 @@ from yaml.representer import Representer, SafeRepresenter
 
 def from_yaml(loader, node):
     'Load mapping as AttrDict, preserving order'
-    # Based on yaml.constructor.BaseConstructor.constructor_mapping()
+    # Based on yaml.constructor.SafeConstructor.construct_mapping()
     attrdict = AttrDict()
     yield attrdict
     if not isinstance(node, MappingNode):
