@@ -57,6 +57,9 @@ dictionaries, retaining the order::
     >>> json.dumps(data)
     >>> yaml.dump(data)
 
+Recipe: Counter with attribute access
+-------------------------------------
+
 You can subclass ``AttrDict`` with mixins for more functionality. Set the
 ``__exclude_keys__`` to exclude certain keys from attribute access. For example,
 to implement a ``Counter`` that uses ``AttrDict``, create this class::
@@ -87,6 +90,9 @@ used as keys::
     >>> c
     CounterAttrDict([('x', 1), ('y', 1)])
 
+Recipe: Ordered defaultdict with attribute access
+-------------------------------------------------
+
 To create a ``defaultdict`` that is ordered and has attribute access, subclass
 from ``AttrDict`` and ``defaultdict``::
 
@@ -97,16 +103,28 @@ from ``AttrDict`` and ``defaultdict``::
     >>>         defaultdict.__init__(self, default_factory)
     >>>         self.__exclude_keys__ |= {'default_factory', '_ipython_display_'}
 
-This can be used with a list factory::
+This can be used with a list factory to collect items::
 
-    >>> d.x
-    []
-    >>> d.y.append(10)
-    >>> d
-    DefaultAttrDict([('x', []), ('y', [10])])
+    >>> d = DefaultAttrDict(list)
+    >>> d.x.append(10)  # Append item without needing to initialise list
+    >>> d.x.append(20)
+    >>> sum(d.x)
+    30
+
+Use it with a set to collect unique items::
+
+    >>> d = DefaultAttrDict(set)
+    >>> d.x.add(5)
+    >>> d.x.add(2)
+    >>> d.x.add(5)      # Duplicate item is ignored
+    >>> sum(d.x)
+    7
+
+Recipe: Ordered tree with attribute access
+------------------------------------------
 
 You can create a tree structure where you can set attributes in any level of the
-hierarchy::
+hierarchy using the above ``DefaultAttrDict``::
 
     >>> tree = lambda: DefaultAttrDict(tree)
     >>> node = tree()
