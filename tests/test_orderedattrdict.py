@@ -3,8 +3,8 @@ import json
 import yaml
 import random
 import unittest
-from collections import OrderedDict, defaultdict, Counter
-from orderedattrdict import AttrDict
+from collections import OrderedDict
+from orderedattrdict import AttrDict, DefaultAttrDict, CounterAttrDict
 from orderedattrdict.yamlutils import AttrDictYAMLLoader, from_yaml
 
 
@@ -209,20 +209,6 @@ class TestAttrDict(unittest.TestCase):
             self.assertEqual(list(result.values()), sorted(result.values()))
 
 
-class DefaultAttrDict(AttrDict, defaultdict):
-    def __init__(self, default_factory, *args, **kwargs):
-        AttrDict.__init__(self, *args, **kwargs)
-        defaultdict.__init__(self, default_factory)
-        self.__exclude_keys__ |= {'default_factory'}
-
-
-class CounterAttrDict(AttrDict, Counter):
-    def __init__(self, *args, **kwargs):
-        AttrDict.__init__(self, *args, **kwargs)
-        Counter.__init__(self)
-        self.__exclude_keys__ |= {'most_common'}
-
-
 class NoneDefaultAttrDict(DefaultAttrDict):
     'A DefaultAttrDict that mimics an AttrDict'
     def __init__(self, *args, **kwargs):
@@ -262,6 +248,20 @@ class TestDefaultAttrDict(TestAttrDict):
         self.assertEqual(ad, {'x': [], 'y': []})
         self.assertFalse('z' in ad)
 
+    def test_defaultdict_with_set(self):
+        'DefaultAttrDict as a set generator'
+        ad = DefaultAttrDict(set)
+        self.assertEqual(ad['x'], set())
+        self.assertEqual(ad['y'], set())
+        self.assertEqual(ad, {'x': set(), 'y': set()})
+        self.assertFalse('z' in ad)
+
+        ad = DefaultAttrDict(set)
+        self.assertEqual(ad.x, set())
+        self.assertEqual(ad.y, set())
+        self.assertEqual(ad, {'x': set(), 'y': set()})
+        self.assertFalse('z' in ad)
+
     def test_defaultdict_tree(self):
         'DefaultAttrDict can be used as a tree'
         tree = lambda: DefaultAttrDict(tree)
@@ -275,3 +275,23 @@ class TestDefaultAttrDict(TestAttrDict):
         ad = tree()
         ad.a.b.c = 1
         self.assertEqual(ad, {'a': {'b': {'c': 1}}})
+
+class TestCounterAttrDict(unittest.TestCase):
+    def test_counterattrdict(self):
+        ad = CounterAttrDict()
+        self.assertEqual(ad.x, 0)
+        self.assertEqual(ad.y, 0)
+        self.assertEqual(ad, {})
+        ad.x += 1
+        ad.y += 2
+        ad.z += 3
+        self.assertEqual(ad, {'x': 1, 'y': 2, 'z': 3})
+
+        ad = CounterAttrDict()
+        self.assertEqual(ad['x'], 0)
+        self.assertEqual(ad['y'], 0)
+        self.assertEqual(ad, {})
+        ad['x'] += 1
+        ad['y'] += 2
+        ad['z'] += 3
+        self.assertEqual(ad, {'x': 1, 'y': 2, 'z': 3})

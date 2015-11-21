@@ -57,24 +57,13 @@ dictionaries, retaining the order::
     >>> json.dumps(data)
     >>> yaml.dump(data)
 
-Recipe: Counter with attribute access
--------------------------------------
+CounterAttrDict
+---------------
 
-You can subclass ``AttrDict`` with mixins for more functionality. Set the
-``__exclude_keys__`` to exclude certain keys from attribute access. For example,
-to implement a ``Counter`` that uses ``AttrDict``, create this class::
+``CounterAttrDict`` provides a Counter with ordered keys and attribute-style
+access::
 
-    >>> from collections import Counter
-    >>> class CounterAttrDict(AttrDict, Counter):
-    >>>     def __init__(self, *args, **kwargs):
-    >>>         AttrDict.__init__(self, *args, **kwargs)
-    >>>         Counter.__init__(self)
-    >>>         self.__exclude_keys__ |= {'most_common', 'elements', 'subtract'}
-
-This ``CounterAttrDict`` acts like a counter but with ordered keys via attribute
-access. However, ``.most_common``, ``.elements`` and ``.subtract`` will not be
-used as keys::
-
+    >>> from orderedattrdict import CounterAttrDict
     >>> c = CounterAttrDict()
     >>> c.x
     0
@@ -90,28 +79,20 @@ used as keys::
     >>> c
     CounterAttrDict([('x', 1), ('y', 1)])
 
-Recipe: Ordered defaultdict with attribute access
--------------------------------------------------
+DefaultAttrDict
+---------------
 
-To create a ``defaultdict`` that is ordered and has attribute access, subclass
-from ``AttrDict`` and ``defaultdict``::
+``DefaultAttrDict`` provides a defaultdict with ordered keys and attribute-style
+access. This can be used with a list factory to collect items::
 
-    >>> from collections import defaultdict
-    >>> class DefaultAttrDict(AttrDict, defaultdict):
-    >>>     def __init__(self, default_factory, *args, **kwargs):
-    >>>         AttrDict.__init__(self, *args, **kwargs)
-    >>>         defaultdict.__init__(self, default_factory)
-    >>>         self.__exclude_keys__ |= {'default_factory', '_ipython_display_'}
-
-This can be used with a list factory to collect items::
-
+    >>> from orderedattrdict import DefaultDict
     >>> d = DefaultAttrDict(list)
     >>> d.x.append(10)  # Append item without needing to initialise list
     >>> d.x.append(20)
     >>> sum(d.x)
     30
 
-Use it with a set to collect unique items::
+or with a set to collect unique items::
 
     >>> d = DefaultAttrDict(set)
     >>> d.x.add(5)
@@ -119,9 +100,6 @@ Use it with a set to collect unique items::
     >>> d.x.add(5)      # Duplicate item is ignored
     >>> sum(d.x)
     7
-
-Recipe: Ordered tree with attribute access
-------------------------------------------
 
 You can create a tree structure where you can set attributes in any level of the
 hierarchy using the above ``DefaultAttrDict``::
@@ -147,3 +125,4 @@ Changelog
 - ``1.1``: Add utilities to load and save as YAML
 - ``1.2``: Allow specific keys to be excluded from attribute access
 - ``1.3``: Restore ``<<`` merge tags for YAML
+- ``1.4``: Add ``CounterAttrDict`` and ``DefaultAttrDict``

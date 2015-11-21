@@ -11,7 +11,7 @@ with open('README.rst') as fp:
 
 setup(
     name='orderedattrdict',
-    version='1.3',
+    version='1.4',
     description='OrderedDict with attribute-style access',
     long_description=long_description,
     author='S Anand',
