@@ -264,7 +264,9 @@ class TestDefaultAttrDict(TestAttrDict):
 
     def test_defaultdict_tree(self):
         'DefaultAttrDict can be used as a tree'
-        tree = lambda: DefaultAttrDict(tree)
+        def tree():
+            return DefaultAttrDict(tree)
+
         ad = tree()
         self.assertEqual(ad['x'], {})
         self.assertEqual(ad['y'], {})
@@ -275,6 +277,7 @@ class TestDefaultAttrDict(TestAttrDict):
         ad = tree()
         ad.a.b.c = 1
         self.assertEqual(ad, {'a': {'b': {'c': 1}}})
+
 
 class TestCounterAttrDict(unittest.TestCase):
     def test_counterattrdict(self):
