@@ -42,8 +42,8 @@ class CounterAttrDict(AttrDict, Counter):
     A Counter with ordered keys and attribute-style access
     '''
     def __init__(self, *args, **kwargs):
-        AttrDict.__init__(self, *args, **kwargs)
-        Counter.__init__(self)
+        super(AttrDict, self).__init__(*args, **kwargs)
+        super(Counter, self).__init__(*args, **kwargs)
         self.__exclude_keys__ |= {'most_common', 'elements', 'subtract'}
 
 
@@ -52,6 +52,6 @@ class DefaultAttrDict(AttrDict, defaultdict):
     A defaultdict with ordered keys and attribute-style access.
     '''
     def __init__(self, default_factory, *args, **kwargs):
-        AttrDict.__init__(self, *args, **kwargs)
+        super(AttrDict, self).__init__(*args, **kwargs)
         defaultdict.__init__(self, default_factory)
         self.__exclude_keys__ |= {'default_factory', '_ipython_display_'}
