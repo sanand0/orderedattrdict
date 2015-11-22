@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 
+# Build process:
 # See https://packaging.python.org/en/latest/distributing.html
+#   rm -rf build dist
+#   flake8 .
+#   python3 setup.py test
 #   python3 setup.py sdist bdist_wheel --universal
 #   twine upload dist/*
 
@@ -11,7 +15,7 @@ with open('README.rst') as fp:
 
 setup(
     name='orderedattrdict',
-    version='1.4',
+    version='1.4.1',
     description='OrderedDict with attribute-style access',
     long_description=long_description,
     author='S Anand',
