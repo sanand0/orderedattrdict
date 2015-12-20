@@ -126,3 +126,4 @@ Changelog
 - ``1.2``: Allow specific keys to be excluded from attribute access
 - ``1.3``: Restore ``<<`` merge tags for YAML
 - ``1.4.1``: Add ``CounterAttrDict`` and ``DefaultAttrDict``
+- ``1.4.2``: Add Python 3.5 support
