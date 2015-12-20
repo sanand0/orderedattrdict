@@ -2,6 +2,16 @@
 
 from collections import OrderedDict, Counter, defaultdict
 
+# Python 3.5 does not allow inheriting from both OrderedDict and defaultdict.
+# So we replace the default C implementation of OrderedDict with a pure Python
+# version that's available in Python 3.5.
+try:
+    class _test_multi_inheritance(OrderedDict, defaultdict):
+        pass
+    del _test_multi_inheritance
+except TypeError:
+    from .ordereddict import OrderedDict
+
 
 class AttrDict(OrderedDict):
     '''
