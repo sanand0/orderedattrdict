@@ -10,7 +10,8 @@ from _collections_abc import KeysView, ItemsView, ValuesView, MutableMapping
 class _OrderedDictKeysView(KeysView):
 
     def __reversed__(self):
-        yield from reversed(self._mapping)
+        for key in reversed(self._mapping):
+            yield key
 
 
 class _OrderedDictItemsView(ItemsView):
@@ -55,7 +56,7 @@ class OrderedDict(dict):
         if not args:
             raise TypeError("descriptor '__init__' of 'OrderedDict' object "
                             "needs an argument")
-        self, *args = args
+        self, args = args[0], args[1:]
         if len(args) > 1:
             raise TypeError('expected at most 1 arguments, got %d' % len(args))
         try:

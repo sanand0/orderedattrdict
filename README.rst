@@ -127,3 +127,4 @@ Changelog
 - ``1.3``: Restore ``<<`` merge tags for YAML
 - ``1.4.1``: Add ``CounterAttrDict`` and ``DefaultAttrDict``
 - ``1.4.2``: Add Python 3.5 support
+- ``1.4.3``: Fix bdist installation issues for Python 2.7
