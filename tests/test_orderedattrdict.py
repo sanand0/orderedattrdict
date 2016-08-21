@@ -169,6 +169,27 @@ class TestAttrDict(unittest.TestCase):
         #   ad.viewvalues()
         #   ad.viewitems()
 
+    def test_conflict(self):
+        data = [
+            ('__format__', 1),
+            ('__contains__', 1),
+            ('keys', 1),
+            ('values', 1),
+            ('items', 1),
+            ('get', 1),
+            ('pop', 1),
+        ]
+        ad = self.klass(data)
+        self.assertTrue(callable(ad.__format__))
+        self.assertTrue(callable(ad.__contains__))
+        self.assertTrue(callable(ad.keys))
+        self.assertTrue(callable(ad.values))
+        self.assertTrue(callable(ad.items))
+        self.assertTrue(callable(ad.get))
+        self.assertTrue(callable(ad.pop))
+        for key, val in data:
+            self.assertEqual(ad[key], val)
+
     def test_yaml(self):
         'Load YAML with ordered AttrDict instead of dict'''
         for iteration in range(10):
