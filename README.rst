@@ -101,15 +101,23 @@ or with a set to collect unique items::
     >>> sum(d.x)
     7
 
-You can create a tree structure where you can set attributes in any level of the
-hierarchy using the above ``DefaultAttrDict``::
+Tree
+----
 
-    >>> tree = lambda: DefaultAttrDict(tree)
-    >>> node = tree()
-    >>> node.x.y.z = 1
+``Tree`` lets you can set attributes in any level of the hierarchy::
+
+    >>> node = Tree()
     >>> node
-    DefaultAttrDict([('x', DefaultAttrDict([('y', DefaultAttrDict([('z', 1)]))]))])
-
+    Tree()
+    >>> node.x.y = 1
+    >>> node
+    Tree([('x', Tree([('y', 1)]))])
+    >>> node.x.z = 2
+    >>> node
+    Tree([('x', Tree([('y', 1), ('z', 2)]))])
+    >>> node.y.a.b = 3
+    >>> node
+    Tree([('x', Tree([('y', 1), ('z', 2)])), ('y', Tree([('a', Tree([('b', 3)]))]))])
 
 Installation
 ------------
@@ -117,6 +125,23 @@ Installation
 This is a pure-Python package built for Python 2.7+ and Python 3.0+. To set up::
 
     pip install orderedattrdict
+
+Updating
+--------
+
+Test locally::
+
+    rm -rf build dist
+    flake8 .
+    python setup.py test
+
+Update version in ``setup.py`` and commit. Then::
+
+    git tag -a v1.x.x           # Annotate with a one-line summary of features
+    git push --follow-tags
+    # Ensure that travis builds pass
+    python setup.py sdist bdist_wheel --universal
+    twine upload dist/*
 
 Changelog
 ---------

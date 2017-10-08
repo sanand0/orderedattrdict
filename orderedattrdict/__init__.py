@@ -65,3 +65,11 @@ class DefaultAttrDict(AttrDict, defaultdict):
         super(AttrDict, self).__init__(*args, **kwargs)
         defaultdict.__init__(self, default_factory)
         self.__exclude_keys__ |= {'default_factory', '_ipython_display_'}
+
+
+class Tree(DefaultAttrDict):
+    '''
+    A tree structure that lets you set attributes at any level.
+    '''
+    def __init__(self, *args, **kwargs):
+        super(Tree, self).__init__(Tree, *args, **kwargs)

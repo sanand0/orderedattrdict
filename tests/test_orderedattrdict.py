@@ -4,7 +4,7 @@ import yaml
 import random
 import unittest
 from collections import OrderedDict
-from orderedattrdict import AttrDict, DefaultAttrDict, CounterAttrDict
+from orderedattrdict import AttrDict, DefaultAttrDict, CounterAttrDict, Tree
 from orderedattrdict.yamlutils import AttrDictYAMLLoader, from_yaml
 
 
@@ -319,3 +319,16 @@ class TestCounterAttrDict(unittest.TestCase):
         ad['y'] += 2
         ad['z'] += 3
         self.assertEqual(ad, {'x': 1, 'y': 2, 'z': 3})
+
+
+class TestTree(unittest.TestCase):
+    def test_tree(self):
+        tree = Tree()
+        tree.x.y.z = 1
+        self.assertEqual(tree, {'x': {'y': {'z': 1}}})
+
+        del tree.x.y
+        self.assertEqual(tree, {'x': {}})
+
+        tree.a.b = None
+        self.assertEqual(tree, {'x': {}, 'a': {'b': None}})
