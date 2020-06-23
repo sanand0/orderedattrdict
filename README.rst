@@ -135,7 +135,7 @@ Test locally::
     flake8 .
     python setup.py test
 
-Update version in ``setup.py`` and Changelog below. Then commit. Then::
+Update version in ``setup.py`` and ``Changelog`` below. Then commit. Then::
 
     git tag -a v1.x.x           # Annotate with a one-line summary of features
     git push --follow-tags
@@ -154,3 +154,4 @@ Changelog
 - ``1.4.2``: Add Python 3.5 support
 - ``1.4.3``: Fix bdist installation issues for Python 2.7
 - ``1.5``: Add ``Tree`` data structure
+- ``1.6``: ``str()`` prints human-friendly dict

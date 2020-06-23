@@ -169,6 +169,12 @@ class TestAttrDict(unittest.TestCase):
         #   ad.viewvalues()
         #   ad.viewitems()
 
+    def test_str(self):
+        items = [('x', 1), ('_y', 2), (3, 3)]
+        ad = self.klass(items)
+        self.assertEqual(str(ad), "{'x': 1, '_y': 2, 3: 3}")
+        self.assertTrue(repr(ad).endswith("([('x', 1), ('_y', 2), (3, 3)])"))
+
     def test_conflict(self):
         data = [
             ('__format__', 1),
@@ -203,8 +209,8 @@ class TestAttrDict(unittest.TestCase):
         yaml.add_constructor(u'tag:yaml.org,2002:omap', from_yaml)
         for iteration in range(10):
             ad = self.gen.obj(10)
-            self.assertEqual(ad, yaml.load(yaml.dump(ad)))
-            self.assertEqual(ad, yaml.load(yaml.safe_dump(ad)))
+            self.assertEqual(ad, yaml.safe_load(yaml.dump(ad)))
+            self.assertEqual(ad, yaml.safe_load(yaml.safe_dump(ad)))
 
     def test_mergetag(self):
         'Check if YAML merge tag works'

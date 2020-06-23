@@ -22,7 +22,7 @@ class AttrDict(OrderedDict):
     __exclude_keys__ = set()
 
     def __getattr__(self, name):
-        'Getting ad.x gets ad["x"]'
+        '''Getting ad.x gets ad["x"]'''
         if (name.startswith('__') or name.startswith('_OrderedDict__') or
                 name in self.__exclude_keys__):
             return super(AttrDict, self).__getattr__(name)
@@ -33,18 +33,22 @@ class AttrDict(OrderedDict):
                 raise AttributeError(name)
 
     def __setattr__(self, name, value):
-        'Setting ad.x sets ad["x"]'
+        '''Setting ad.x sets ad["x"]'''
         if (name.startswith('__') or name.startswith('_OrderedDict__') or
                 name in self.__exclude_keys__):
             return super(AttrDict, self).__setattr__(name, value)
         self[name] = value
 
     def __delattr__(self, name):
-        'Deleting ad.x deletes ad["x"]'
+        '''Deleting ad.x deletes ad["x"]'''
         if (name.startswith('__') or name.startswith('_OrderedDict__') or
                 name in self.__exclude_keys__):
             return super(AttrDict, self).__delattr__(name)
         del self[name]
+
+    def __str__(self):
+        '''Print like a dict that is human readable'''
+        return str(dict(self))
 
 
 class CounterAttrDict(AttrDict, Counter):
