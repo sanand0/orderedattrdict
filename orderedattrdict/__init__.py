@@ -48,7 +48,7 @@ class AttrDict(OrderedDict):
 
     def __str__(self):
         '''Print like a dict that is human readable'''
-        return str(dict(self))
+        return '{' + ', '.join('%r: %r' % (key, val) for key, val in self.items()) + '}'
 
 
 class CounterAttrDict(AttrDict, Counter):
